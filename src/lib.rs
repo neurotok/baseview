@@ -15,6 +15,8 @@ mod window_open_options;
 
 #[cfg(feature = "opengl")]
 pub mod gl;
+#[cfg(feature = "vulkan")]
+pub mod vk;
 
 pub use clipboard::*;
 pub use event::*;

@@ -10,6 +10,7 @@ authors = [
     "Anton Lazarev <https://antonok.com>",
     "Joakim Frostegård <joakim.frostegard@gmail.com>",
     "Robbert van der Helm <mail@robbertvanderhelm.nl>",
+    "Marcin Zając <marcin@pingpongcat.com>",
 ]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -17,10 +18,12 @@ license = "MIT OR Apache-2.0"
 [features]
 default = []
 opengl = ["uuid", "x11/glx"]
+vulkan = ["ash"]
 
 [dependencies]
 keyboard-types = { version = "0.6.1", default-features = false }
 raw-window-handle = "0.4.2"
+ash = { version = "0.37.3", optional = true }
 
 [target.'cfg(target_os="linux")'.dependencies]
 xcb = { version = "0.9", features = ["thread", "xlib_xcb", "dri2"] }
