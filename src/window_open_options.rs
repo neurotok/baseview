@@ -26,4 +26,6 @@ pub struct WindowOpenOptions {
     /// access this context through [crate::Window::gl_context].
     #[cfg(feature = "opengl")]
     pub gl_config: Option<crate::gl::GlConfig>,
+    #[cfg(feature = "vulkan")]
+    pub vk_config: Option<crate::gl::VkConfig>,
 }

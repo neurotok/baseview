@@ -121,6 +121,12 @@ impl<'a> Window<'a> {
     pub fn gl_context(&self) -> Option<&crate::gl::GlContext> {
         self.window.gl_context()
     }
+    /// If provided, then an Vulkan context will be created for this window. You'll be able to
+    /// access this context through [crate::Window::vk_context].
+    #[cfg(feature = "vulkan")]
+    pub fn vk_context(&self) -> Option<&crate::gl::VKContext> {
+        self.window.vk_context()
+    }
 }
 
 unsafe impl<'a> HasRawWindowHandle for Window<'a> {

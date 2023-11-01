@@ -39,7 +39,7 @@ pub struct VkConfig {
 
 impl Default for VkConfig {
     fn default() -> Self {
-        GlConfig {
+        VkConfig {
             version: (3, 2),
             profile: Profile::Core,
             red_bits: 8,
@@ -70,7 +70,7 @@ pub enum VkError {
 }
 
 pub struct VkContext {
-    context: platform::GlContext,
+    context: platform::VkContext,
     phantom: PhantomData<*mut ()>,
 }
 
@@ -79,8 +79,8 @@ impl VkContext {
     pub(crate) unsafe fn create(
         parent: &impl HasRawWindowHandle, config: VkConfig,
     ) -> Result<VkContext, VkError> {
-        platform::GlContext::create(parent, config)
-            .map(|context| GlContext { context, phantom: PhantomData })
+        platform::VkContext::create(parent, config)
+            .map(|context| VkContext { context, phantom: PhantomData })
     }
 
     /// The X11 version needs to be set up in a different way compared to the Windows and macOS
@@ -88,7 +88,7 @@ impl VkContext {
     /// baseview, and then this object can be passed to the user.
     #[cfg(target_os = "linux")]
     pub(crate) fn new(context: platform::VkContext) -> VkContext {
-        VgContext { context, phantom: PhantomData }
+        VkContext { context, phantom: PhantomData }
     }
 
     pub unsafe fn make_current(&self) {
