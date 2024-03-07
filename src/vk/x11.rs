@@ -2,10 +2,19 @@ use ash::{version::EntryV1_0, version::InstanceV1_0, vk};
 use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
 use std::ptr;
 
-pub struct VkContext {
-    _entry: ash::Entry,
+pub struct Init
+{
+    entry: ash::Entry,
     instance: ash::Instance,
     surface: vk::SurfaceKHR,
+    physical_device: vk::PhysicalDevice,
+    device: ash::Device,
+}
+
+pub struct VkContext {
+    window: c_ulong,
+    display: *mut xlib::_XDisplay,
+    init: Init,
 }
 
 impl VkContext {
@@ -17,7 +26,7 @@ impl VkContext {
             p_application_name: app_name.as_ptr(),
             s_type: vk::StructureType::APPLICATION_INFO,
             p_next: ptr::null(),
-            application_version: vk::make_version(1, 0, 0),
+            application_version: vk::make_version(config.version(0), config.version(1), 0),
             engine_version: vk::make_version(1, 0, 0),
             api_version: vk::API_VERSION_1_0,
             p_engine_name: app_name.as_ptr(),
@@ -59,6 +68,40 @@ impl VkContext {
             _entry: entry,
             instance,
             surface,
+        })
+    }
+
+    pub unsafe fn make_current(&self) {
+        errors::XErrorHandler::handle(self.display, |error_handler| {
+            let res = glx::glXMakeCurrent(self.display, self.window, self.context);
+            error_handler.check().unwrap();
+            if res == 0 {
+                panic!("make_current failed")
+            }
+        })
+    }
+
+    pub unsafe fn make_not_current(&self) {
+        errors::XErrorHandler::handle(self.display, |error_handler| {
+            let res = glx::glXakeCurrent(self.display, 0, std::ptr::null_mut());
+            error_handler.check().unwrap();
+            if res == 0 {
+                panic!("make_not_current failed")
+            }
+        })
+    }
+
+    pub fn get_proc_address(&self, symbol: &str) -> *const c_void {
+        get_proc_address(symbol)
+    }
+
+    pub fn swap_buffers(&self) {
+        errors::XErrorHandler::handle(self.display, |error_handler| {
+            unsafe {
+                // TODO vulkan version
+                //glx::glXSwapBuffers(self.display, self.window);
+            }
+            error_handler.check().unwrap();
         })
     }
 }

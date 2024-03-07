@@ -24,22 +24,14 @@ use macos as platform;
 #[derive(Clone, Debug)]
 pub struct VkConfig {
     pub version: (u8, u8),
-    pub profile: Profile,
 }
 
 impl Default for VkConfig {
     fn default() -> Self {
         VkConfig {
-            version: (3, 2),
-            profile: Profile::Core,
+            version: (1, 2),
         }
     }
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Profile {
-    Compatibility,
-    Core,
 }
 
 #[derive(Debug)]
