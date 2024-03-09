@@ -2,22 +2,31 @@ use ash::{version::EntryV1_0, version::InstanceV1_0, vk};
 use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
 use std::ptr;
 
-pub struct Init
+pub enum Queue{
+    Graphics(vk::Queue),
+    Transfer(vk::Queue),
+    VideoDecode(vk::Queue),
+    VideoEncode(vk::Queue),
+}
+
+pub struct VkContext
 {
     entry: ash::Entry,
     instance: ash::Instance,
-    surface: vk::SurfaceKHR,
     physical_device: vk::PhysicalDevice,
     device: ash::Device,
+    surface: vk::SurfaceKHR,
+    command_pool: vk::CommandPool,
+    queues: Vec<Queue>,
 }
 
-pub struct VkContext {
+pub struct Context {
     window: c_ulong,
     display: *mut xlib::_XDisplay,
-    init: Init,
+    context: VkContext,
 }
 
-impl VkContext {
+impl Context {
     pub fn new(window_handle: &impl HasRawWindowHandle) -> Result<Self, String> {
         let entry = ash::Entry::new().map_err(|_| "Unable to create Vulkan entry points.")?;
 
@@ -104,9 +113,10 @@ impl VkContext {
             error_handler.check().unwrap();
         })
     }
+
 }
 
-impl Drop for VkContext {
+impl Drop for Context {
     fn drop(&mut self) {
         unsafe {
             self.instance.destroy_surface_khr(self.surface, None);

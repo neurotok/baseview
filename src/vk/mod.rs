@@ -23,16 +23,25 @@ use macos as platform;
 
 #[derive(Clone, Debug)]
 pub struct VkConfig {
-    pub version: (u8, u8),
+    pub minimum_version: (u8, u8),
+    pub request_validation_layers: bool,
+    pub use_default_debug_messenger: bool,
+    pub required_dedicated_transfer_queue: bool,
+    pub required_device_extensions: Vec<String>,
 }
 
 impl Default for VkConfig {
     fn default() -> Self {
         VkConfig {
-            version: (1, 2),
+            minimum_version: (1, 2),
+            request_validation_layers: false,
+            use_default_debug_messenger: true,
+            required_dedicated_transfer_queue: false,
+            required_device_extensions: vec!["VK_KHR_swapchain".to_string],
         }
     }
 }
+
 
 #[derive(Debug)]
 pub enum VkError {
