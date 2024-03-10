@@ -111,7 +111,7 @@ impl<'a> Window<'a> {
     /// If provided, then an Vulkan context will be created for this window. You'll be able to
     /// access this context through [crate::Window::vk_context].
     #[cfg(feature = "vulkan")]
-    pub fn vk_context(&self) -> Option<&crate::gl::VKContext> {
+    pub fn vk_context(&self) -> Option<&crate::vk::VkContext> {
         self.window.vk_context()
     }
 }

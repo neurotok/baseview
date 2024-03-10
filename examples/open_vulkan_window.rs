@@ -11,11 +11,19 @@ enum Message {
     Hello,
 }
 
-struct OpenWindowExample {
+struct OpenVulkanWindowExample {
     rx: Consumer<Message>,
+
 }
 
-impl WindowHandler for OpenWindowExample {
+impl OpenVulkanWindowExample {
+    fn new(window: &Window, rx: Consumer<Message>) -> Self {
+        let context = window.vk_context().expect("Failed to obtain Vulkan context");
+        Self { rx }
+    }
+}
+
+impl WindowHandler for OpenVulkanWindowExample {
     fn on_frame(&mut self, _window: &mut Window) {
         while let Ok(message) = self.rx.pop() {
             println!("Message: {:?}", message);
@@ -48,10 +56,10 @@ fn main() {
         title: "baseview".into(),
         size: baseview::Size::new(512.0, 512.0),
         scale: WindowScalePolicy::SystemScaleFactor,
-
-        // TODO: Add an example that uses the OpenGL context
         #[cfg(feature = "opengl")]
         gl_config: None,
+        #[cfg(feature = "vulkan")]
+        vk_config: Some(Default::default()),
     };
 
     let (mut tx, rx) = RingBuffer::new(128);
@@ -64,5 +72,5 @@ fn main() {
         }
     });
 
-    Window::open_blocking(window_open_options, |_| OpenWindowExample { rx });
+    Window::open_blocking(window_open_options, |_| OpenVulkanWindowExample::new(&window, rx));
 }

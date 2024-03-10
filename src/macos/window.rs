@@ -31,6 +31,8 @@ use super::view::{create_view, BASEVIEW_STATE_IVAR};
 
 #[cfg(feature = "opengl")]
 use crate::gl::{GlConfig, GlContext};
+#[cfg(feature = "vulkan")]
+use crate::vk::{VkConfig, VkContext};
 
 pub struct WindowHandle {
     state: Rc<WindowState>,
@@ -66,6 +68,8 @@ pub(super) struct WindowInner {
 
     #[cfg(feature = "opengl")]
     gl_context: Option<GlContext>,
+    #[cfg(feature = "vulkan")]
+    vk_context: Option<VkContext>,
 }
 
 impl WindowInner {

@@ -37,7 +37,7 @@ impl Default for VkConfig {
             request_validation_layers: false,
             use_default_debug_messenger: true,
             required_dedicated_transfer_queue: false,
-            required_device_extensions: vec!["VK_KHR_swapchain".to_string],
+            required_device_extensions: vec!["VK_KHR_swapchain".to_string, "VK_KHR_surface".to_string],
         }
     }
 }
@@ -47,7 +47,6 @@ impl Default for VkConfig {
 pub enum VkError {
     InvalidWindowHandle,
     VersionNotSupported,
-    CreationFailed(platform::CreationFailedError),
 }
 
 pub struct VkContext {
@@ -72,21 +71,21 @@ impl VkContext {
         VkContext { context, phantom: PhantomData }
     }
 
-    pub unsafe fn make_current(&self) {
-        self.context.make_current();
-    }
+    // pub unsafe fn make_current(&self) {
+    //     self.context.make_current();
+    // }
 
-    pub unsafe fn make_not_current(&self) {
-        self.context.make_not_current();
-    }
+    // pub unsafe fn make_not_current(&self) {
+    //     self.context.make_not_current();
+    // }
 
-    pub fn get_proc_address(&self, symbol: &str) -> *const c_void {
-        self.context.get_proc_address(symbol)
-    }
+    // pub fn get_proc_address(&self, symbol: &str) -> *const c_void {
+    //     self.context.get_proc_address(symbol)
+    // }
 
-    pub fn swap_buffers(&self) {
-        self.context.swap_buffers();
-    }
+    // pub fn swap_buffers(&self) {
+    //     self.context.swap_buffers();
+    // }
 
     /// On macOS the `NSOpenGLView` needs to be resized separtely from our main view.
     #[cfg(target_os = "macos")]

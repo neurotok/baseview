@@ -22,6 +22,8 @@ use super::keyboard::{convert_key_press_event, convert_key_release_event, key_mo
 
 #[cfg(feature = "opengl")]
 use crate::gl::{platform, GlContext};
+#[cfg(feature = "vulkan")]
+use crate::vk::{platform, VkContext};
 
 pub struct WindowHandle {
     raw_window_handle: Option<RawWindowHandle>,
@@ -103,6 +105,8 @@ struct WindowInner {
 
     #[cfg(feature = "opengl")]
     gl_context: Option<GlContext>,
+    #[cfg(feature = "vulkan")]
+    vk_context: Option<VkContext>,
 }
 
 pub struct Window<'a> {
@@ -315,6 +319,18 @@ impl<'a> Window<'a> {
             GlContext::new(context)
         });
 
+        #[cfg(feature = "vulkan")]
+        let vk_context = {
+            use std::ffi::c_ulong;
+
+            let window = window_id as c_ulong;
+            let display = xcb_connection.conn.get_raw_dpy();
+
+            let context = unsafe { platform::VkContext::create(window, display) }
+                .expect("Could not create Vulkan context");
+            Some(VkContext::new(context))
+         };
+
         let mut inner = WindowInner {
             xcb_connection,
             window_id,
@@ -331,6 +347,8 @@ impl<'a> Window<'a> {
 
             #[cfg(feature = "opengl")]
             gl_context,
+            #[cfg(feature = "vulkan")]
+            vk_context,
         };
 
         let mut window = crate::Window::new(Window { inner: &mut inner });
@@ -391,6 +409,11 @@ impl<'a> Window<'a> {
     #[cfg(feature = "opengl")]
     pub fn gl_context(&self) -> Option<&crate::gl::GlContext> {
         self.inner.gl_context.as_ref()
+    }
+
+    #[cfg(feature = "vulkan")]
+    pub fn vk_context(&self) -> Option<&crate::vk::VkContext> {
+        self.inner.vk_context.as_ref()
     }
 
     fn find_visual_for_depth(screen: &StructPtr<xcb_screen_t>, depth: u8) -> Option<u32> {

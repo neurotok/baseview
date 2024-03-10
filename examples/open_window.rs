@@ -48,10 +48,10 @@ fn main() {
         title: "baseview".into(),
         size: baseview::Size::new(512.0, 512.0),
         scale: WindowScalePolicy::SystemScaleFactor,
-
-        // TODO: Add an example that uses the OpenGL context
         #[cfg(feature = "opengl")]
         gl_config: None,
+        #[cfg(feature = "vulkan")]
+        vk_config: None,
     };
 
     let (mut tx, rx) = RingBuffer::new(128);

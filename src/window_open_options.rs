@@ -27,5 +27,5 @@ pub struct WindowOpenOptions {
     #[cfg(feature = "opengl")]
     pub gl_config: Option<crate::gl::GlConfig>,
     #[cfg(feature = "vulkan")]
-    pub vk_config: Option<crate::gl::VkConfig>,
+    pub vk_config: Option<crate::vk::VkConfig>,
 }
