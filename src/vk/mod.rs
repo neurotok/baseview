@@ -37,7 +37,7 @@ impl Default for VkConfig {
             request_validation_layers: false,
             use_default_debug_messenger: true,
             required_dedicated_transfer_queue: false,
-            required_device_extensions: vec!["VK_KHR_swapchain".to_string, "VK_KHR_surface".to_string],
+            required_device_extensions: vec![String::from("VK_KHR_swapchain"), String::from("VK_KHR_surface")],
         }
     }
 }

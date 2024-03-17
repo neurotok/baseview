@@ -1,0 +1,139 @@
+{
+	// Użyj funkcji IntelliSense, aby uzyskać informacje o możliwych atrybutach.
+	// Najedź kursorem, aby wyświetlić opisy istniejących atrybutów.
+	// Aby uzyskać więcej informacji, odwiedź stronę: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug open_vulkan_window'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--lib",
+					"--package=baseview"
+				],
+				"filter": {
+					"name": "baseview",
+					"kind": "lib"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug example 'open_window'",
+			"cargo": {
+				"args": [
+					"build",
+					"--example=open_window",
+					"--package=baseview"
+				],
+				"filter": {
+					"name": "open_window",
+					"kind": "example"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in example 'open_window'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--example=open_window",
+					"--package=baseview"
+				],
+				"filter": {
+					"name": "open_window",
+					"kind": "example"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug example 'open_vulkan_window'",
+			"cargo": {
+				"args": [
+					"build",
+					"--example=open_vulkan_window",
+					"--features=vulkan"
+					//"--package=baseview"
+				],
+				"filter": {
+					"name": "open_vulkan_window",
+					"kind": "example"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in example 'open_vulkan_window'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--example=open_vulkan_window",
+					"--package=baseview"
+				],
+				"filter": {
+					"name": "open_vulkan_window",
+					"kind": "example"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug example 'open_opengl_window'",
+			"cargo": {
+				"args": [
+					"build",
+					"--example=open_opengl_window",
+					"--package=baseview"
+				],
+				"filter": {
+					"name": "open_opengl_window",
+					"kind": "example"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in example 'open_opengl_window'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--example=open_opengl_window",
+					"--package=baseview"
+				],
+				"filter": {
+					"name": "open_opengl_window",
+					"kind": "example"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		}
+	]
+}

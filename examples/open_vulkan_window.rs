@@ -1,3 +1,7 @@
+
+use ash::vk;
+pub use ash::{Device, Instance};
+
 use std::time::Duration;
 
 use rtrb::{Consumer, RingBuffer};
@@ -21,6 +25,8 @@ impl OpenVulkanWindowExample {
         let context = window.vk_context().expect("Failed to obtain Vulkan context");
         Self { rx }
     }
+
+
 }
 
 impl WindowHandler for OpenVulkanWindowExample {
@@ -72,5 +78,5 @@ fn main() {
         }
     });
 
-    Window::open_blocking(window_open_options, |_| OpenVulkanWindowExample::new(&window, rx));
+    Window::open_blocking(window_open_options, move |window| OpenVulkanWindowExample::new(&window, rx));
 }
