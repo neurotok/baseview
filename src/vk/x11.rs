@@ -83,42 +83,35 @@ impl Init {
 
             // TODO pass in config
             let app_name = CString::new("Eyecatcher").unwrap();
-            let app_info = vk::ApplicationInfo {
-                p_application_name: app_name.as_ptr(),
-                s_type: vk::StructureType::APPLICATION_INFO,
-                p_next: ptr::null(),
-                //application_version: vk::make_version(config.version(0), config.version(1), 0),
-                application_version: vk::make_api_version(1, 3, 0, 0),
-                engine_version: vk::make_api_version(1, 0, 0, 0),
-                api_version: vk::API_VERSION_1_0,
-                p_engine_name: app_name.as_ptr(),
-            };
 
-            let instance_info = vk::InstanceCreateInfo {
-                s_type: vk::StructureType::INSTANCE_CREATE_INFO,
-                p_next: ptr::null(),
-                flags: vk::InstanceCreateFlags::empty(),
-                p_application_info: &app_info,
-                enabled_extension_count: 1,
-                pp_enabled_extension_names: [XlibSurface::name().as_ptr()].as_ptr()
-                    as *const *const i8,
-                pp_enabled_layer_names: ptr::null(),
-                enabled_layer_count: 0,
-            };
+            let app_info = vk::ApplicationInfo::builder()
+                .application_name(&app_name)
+                .application_version(vk::make_api_version(1, 3, 0, 0))
+                .engine_version(vk::make_api_version(1, 0, 0, 0))
+                .api_version(vk::API_VERSION_1_0)
+                .engine_name(&app_name);
+
+            let extension_names_raw = [
+                XlibSurface::name().as_ptr(),
+                DebugUtils::name().as_ptr(),
+                Surface::name().as_ptr(),
+            ];
+
+            let instance_info = vk::InstanceCreateInfo::builder()
+                .application_info(&app_info)
+                .enabled_extension_names(&extension_names_raw);
 
             let instance = entry
                 .create_instance(&instance_info, None)
                 .map_err(|_| "Unable to create Vulkan instance.")?;
 
-            let surface = XlibSurface::new(&entry, &instance);
+            let surface_info = vk::XlibSurfaceCreateInfoKHR::builder()
+                .window(window)
+                .dpy(display as *mut _)
+                .build();
 
-            let surface_info = vk::XlibSurfaceCreateInfoKHR {
-                s_type: vk::StructureType::XLIB_SURFACE_CREATE_INFO_KHR,
-                p_next: ptr::null(),
-                flags: vk::XlibSurfaceCreateFlagsKHR::empty(),
-                window,
-                dpy: display as *mut _,
-            };
+            //let surface_fn = XlibSurface::new(&entry, &instance);
+            //surface_fn.create_xlib_surface(&surface, None).unwrap();
 
             surface
                 .create_xlib_surface(&surface_info, None)
