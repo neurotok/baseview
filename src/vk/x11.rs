@@ -31,8 +31,8 @@ pub enum Queue {
 pub struct Init {
     entry: Entry,
     instance: Instance,
-    //surface: vk::SurfaceKHR,
-    surface: XlibSurface,
+    surface: vk::SurfaceKHR,
+    //surface: XlibSurface,
     pdevice: vk::PhysicalDevice,
     queue_family_index: u32,
     device: Device,
@@ -110,14 +110,22 @@ impl Init {
                 .dpy(display as *mut _)
                 .build();
 
-            //let surface_fn = XlibSurface::new(&entry, &instance);
-            //surface_fn.create_xlib_surface(&surface, None).unwrap();
+            let surface_fn = XlibSurface::new(&entry, &instance);
 
-            surface
+            let surface = surface_fn
                 .create_xlib_surface(&surface_info, None)
                 .map_err(|_| "Unable to create Vulkan Xlib surface.")?;
 
             let pdevices = instance.enumerate_physical_devices().expect("Physical device error");
+
+            // let support_presentation = unsafe {
+            //     surface_fn.get_physical_device_xlib_presentation_support(
+            //         pdevices[0],
+            //         0,
+            //         &mut (display as *const c_void),
+            //         visual_id,
+            //     )
+            // };
 
             let (pdevice, queue_family_index) = pdevices
                 .iter()
@@ -129,14 +137,16 @@ impl Init {
                         .find_map(|(index, info)| {
                             let supports_graphic =
                                 info.queue_flags.contains(vk::QueueFlags::GRAPHICS);
-                            let supports_surface = check_physical_device_surface_support(
-                                *pdevice,
-                                index as u32,
-                                &surface,
-                                display as *mut *const c_void,
-                                0,
-                            );
-                            if supports_graphic && supports_surface {
+                            // TOOD surface support
+                            // let supports_surface = check_physical_device_surface_support(
+                            //     *pdevice,
+                            //     index as u32,
+                            //     &surface_fn,
+                            //     display as *mut *const c_void,
+                            //     0,
+                            // );
+                            //if supports_graphic && supports_surface {
+                            if supports_graphic {
                                 Some((*pdevice, index))
                             } else {
                                 None
