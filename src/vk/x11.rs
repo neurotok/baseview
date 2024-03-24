@@ -110,6 +110,7 @@ impl Init {
                 .dpy(display as *mut _)
                 .build();
 
+            let surface_loader = Surface::new(&entry, &instance);
             let surface_fn = XlibSurface::new(&entry, &instance);
 
             let surface = surface_fn
@@ -117,15 +118,6 @@ impl Init {
                 .map_err(|_| "Unable to create Vulkan Xlib surface.")?;
 
             let pdevices = instance.enumerate_physical_devices().expect("Physical device error");
-
-            // let support_presentation = unsafe {
-            //     surface_fn.get_physical_device_xlib_presentation_support(
-            //         pdevices[0],
-            //         0,
-            //         &mut (display as *const c_void),
-            //         visual_id,
-            //     )
-            // };
 
             let (pdevice, queue_family_index) = pdevices
                 .iter()
@@ -137,16 +129,22 @@ impl Init {
                         .find_map(|(index, info)| {
                             let supports_graphic =
                                 info.queue_flags.contains(vk::QueueFlags::GRAPHICS);
-                            // TOOD surface support
-                            // let supports_surface = check_physical_device_surface_support(
-                            //     *pdevice,
-                            //     index as u32,
-                            //     &surface_fn,
-                            //     display as *mut *const c_void,
-                            //     0,
-                            // );
-                            //if supports_graphic && supports_surface {
-                            if supports_graphic {
+                            // TOOD X11 presentation support
+                            // let support_presentation = unsafe {
+                            //     surface_fn.get_physical_device_xlib_presentation_support(
+                            //         pdevices[0],
+                            //         0,
+                            //         &mut (display as *const c_void),
+                            //         visual_id,
+                            //     )
+                            // };
+                            let supports_surface = surface_loader
+                                .get_physical_device_surface_support(
+                                    *pdevice,
+                                    index as u32,
+                                    surface,
+                                ).unwrap();
+                            if supports_graphic && supports_surface {
                                 Some((*pdevice, index))
                             } else {
                                 None
@@ -169,10 +167,6 @@ impl Init {
                 .queue_family_index(queue_family_index)
                 .queue_priorities(&priorities);
 
-            // let queue_info = vk::DeviceQueueCreateInfo::default()
-            //     .queue_family_index(queue_family_index)
-            //     .queue_priorities(&priorities);
-
             let device_create_info = vk::DeviceCreateInfo::builder()
                 .queue_create_infos(std::slice::from_ref(&queue_info))
                 .enabled_extension_names(&device_extension_names_raw)
@@ -182,6 +176,19 @@ impl Init {
                 instance.create_device(pdevice, &device_create_info, None).unwrap();
 
             let present_queue = device.get_device_queue(queue_family_index, 0);
+
+            let surface_formats = surface_loader
+                .get_physical_device_surface_formats(pdevice, surface)
+                .expect("Surface formats error");
+
+            // Print surfaces
+            for surface_format in surface_formats.iter() {
+                println!("Surface format: {:?}", surface_format);
+            }
+
+            // let surface_formats = surface_fn
+            //     .get_physical_device_surface_formats_khr(pdevice, surface)
+            //     .expect("Surface formats error");
 
             Ok(Self { entry, instance, surface, pdevice, queue_family_index, device })
         }
