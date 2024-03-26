@@ -23,6 +23,10 @@ struct OpenVulkanWindowExample {
 impl OpenVulkanWindowExample {
     fn new(window: &Window, rx: Consumer<Message>) -> Self {
         let context = window.vk_context().expect("Failed to obtain Vulkan context");
+
+        let device = context.get_device();
+
+
         Self { rx }
     }
 

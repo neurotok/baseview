@@ -1,6 +1,9 @@
 use std::ffi::c_void;
 use std::marker::PhantomData;
 
+use ash::vk;
+pub use ash::{Device, Instance};
+
 // On X11 creating the context is a two step process
 #[cfg(not(target_os = "linux"))]
 use raw_window_handle::HasRawWindowHandle;
@@ -69,6 +72,10 @@ impl VkContext {
     #[cfg(target_os = "linux")]
     pub(crate) fn new(context: platform::VkContext) -> VkContext {
         VkContext { context, phantom: PhantomData }
+    }
+
+    pub fn get_device(&self) -> &Device {
+        self.context.get_device()
     }
 
     // pub unsafe fn make_current(&self) {

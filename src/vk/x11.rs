@@ -9,6 +9,9 @@ use std::os::raw::c_ulong as other_c_ulong;
 use std::os::raw::c_void;
 use x11::xlib;
 
+// use ash::vk;
+// pub use ash::{Device, Instance};
+
 use super::{VkConfig, VkError};
 
 use ash::extensions::{
@@ -21,13 +24,6 @@ pub use ash::{Device, Instance};
 use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
 use std::ptr;
 
-pub enum Queue {
-    Graphics(vk::Queue),
-    Transfer(vk::Queue),
-    VideoDecode(vk::Queue),
-    VideoEncode(vk::Queue),
-}
-
 pub struct Init {
     entry: Entry,
     instance: Instance,
@@ -37,13 +33,12 @@ pub struct Init {
     queue_family_index: u32,
     device: Device,
     // command_pool: vk::CommandPool,
-    // queues: Vec<Queue>,
 }
 
 pub struct VkContext {
     window: other_c_ulong,
     display: *mut xlib::_XDisplay,
-    init: Init,
+    pub init: Init,
 }
 
 impl VkContext {
@@ -55,6 +50,10 @@ impl VkContext {
         }
 
         Ok(VkContext { window, display, init: Init::new(window, display).unwrap() })
+    }
+
+    pub fn get_device(&self) -> &Device {
+        &self.init.device
     }
 }
 
